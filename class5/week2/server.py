@@ -5,12 +5,13 @@
    client on being called.
 """
 
+import sys
 import socket
 
 def main():
 	mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
-		mysock.bind(("", 8008))
+		mysock.bind(("localhost", 80))
 		mysock.listen(8)
 
 		request_count = 0
@@ -18,13 +19,15 @@ def main():
 			conn, (client_addr, client_port) = mysock.accept()
 			conn.setblocking(True)
 			# read this connection fully.
-			data = conn.recv(1048576).decode("utf8")
+			data = conn.recv(1024).decode("utf8")
 			if data is not None:
 				request_count += 1
 				conn.sendall(("""HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n
 
 Got a request from (%s:%d: Request %d)
 """ % (client_addr, client_port, request_count,)).encode("utf8"))
+				conn.close()
+				sys.stderr.write("%s: %d\n" % (client_addr, client_port))
 
 	except socket.error:
 		print("Unable to bind socket.")
