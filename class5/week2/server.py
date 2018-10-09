@@ -11,7 +11,7 @@ import socket
 def main():
 	mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
-		mysock.bind(("localhost", 80))
+		mysock.bind(("", 80))
 		mysock.listen(8)
 
 		request_count = 0
